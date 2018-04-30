@@ -1,0 +1,33 @@
+api key=d7abe8077ee5d57e11191f76f302bfb4
+
+
+api read access token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkN2FiZTgwNzdlZTVkNTdlMTExOTFmNzZmMzAyYmZiNCIsInN1YiI6IjVhZTE3NmMwYzNhMzY4NzY4ODAwODM1MCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.ylhVhpFdgcP9-zaMbaZDkz5Asrupc1AP_z7GWoD92lI
+example of api request=
+https://api.themoviedb.org/3/movie/550?api_key=d7abe8077ee5d57e11191f76f302bfb4
+
+
+---get movie certifications list:-
+https://api.themoviedb.org/3/certification/movie/list?api_key=d7abe8077ee5d57e11191f76f302bfb4
+
+
+  "request_token": "b5af20f2ae697c451595fd8217232c63b21b7127"
+
+  "session_id": "506a64664e7a64505b6035e853a384400451684f"
+
+  "id": 7868457,
+
+  collection id=550
+
+  "genre_ids": [
+        28,
+        12,
+        878
+      ],
+      "id": 11,
+
+
+      api key for phone pe=8289e078-be0b-484d-ae60-052f117f8deb
+      2)=48b7228c-605e-4bab-9632-5bf9e61e8b75
+
+
+      Merchant ID: M2306160483220675579140 
