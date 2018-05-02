@@ -8,6 +8,8 @@ var port = process.env.PORT || 3000
 
 const jiraUsername = "admin";
 const jiraPassword = "Pournima108";
+console.log("jiraUsername");
+condsole.log("jiraPassword")
 
 
 app.post('/webhook', function(req, res){
