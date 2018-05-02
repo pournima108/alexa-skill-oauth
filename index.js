@@ -1,10 +1,11 @@
 var Alexa = require("alexa-sdk");
-var { JIRA } = require('.JIRA/');
+var { JIRA } = require('./JIRA');
 var express = require('express')
 var app = express()
 var  request = require('request');
+var server = require('http').createServer(app)
+var port = process.env.PORT || 3000
 
-var APP_ID = 'amzn1.ask.skill.4f05a321-de24-4a56-a7b4-9e83eb9e5a54';
 const jiraUsername = "admin";
 const jiraPassword = "Pournima108";
 
@@ -363,4 +364,6 @@ app.post('/webhook', function(req, res){
         // parsing the requestBody for information
 
 
-app.listen(port);
+        app.listen(port, () => console.log('Webhook server is listening, port ',port))
+
+
