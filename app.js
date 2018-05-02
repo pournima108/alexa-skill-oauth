@@ -71,6 +71,7 @@ class JIRA {
                     callback(data);
                 }
         });
+        console.log("added cooment");
         return "Added comment: '" + body +"' to issue: " + issueID;
     }
 
@@ -93,6 +94,7 @@ class JIRA {
                     callback(data);
                 };
         });
+        console.log("Assigning issue");
         return "Assigning issue: " + issueID + " to " + userMapping[assignee];
     }
 
@@ -115,6 +117,7 @@ class JIRA {
                         callback(data);
                     };
                 });
+                console.log("Got transitions");
         return "Got transitions";
     }
 
@@ -157,7 +160,7 @@ class JIRA {
                     callback(data);
                 };
         });
-
+        console.log("notifyOnIssue");
         return "Query all"
     }
 
@@ -179,7 +182,7 @@ class JIRA {
                     callback(searchResult);
                 };
         });
-
+        console.log("Query all");
         return "Query all"
     }
 
@@ -205,6 +208,7 @@ class JIRA {
                         callback(data);
                     };
         });
+        console.log("transition");
         return "Issue " + issueID + " has been moved to column " + columnId;
     }
 
@@ -233,6 +237,7 @@ class JIRA {
                     callback(data);
                 };
         });
+        console.log("updateDescription");
         return "In issue " + issueID + ", set description to " + description;
     }
 
@@ -261,6 +266,7 @@ class JIRA {
                     callback(data);
                 };
         });
+        console.log("updateSummary");
         return "In issue " + issueID + ", set summary to " + summary;
     }
 

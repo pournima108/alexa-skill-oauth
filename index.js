@@ -1,5 +1,5 @@
 var Alexa = require("alexa-sdk");
-var { JIRA } = require('./JIRA');
+var { JIRA } = require('./app');
 var express = require('express')
 var app = express()
 var  request = require('request');
@@ -22,6 +22,7 @@ app.post('/webhook', function(req, res){
         var responseBody = {};
        var jsonData = JSON.parse(requestBody); 
       if(jsonData.request.type == "LaunchRequest") {
+          console.log("launch request")
         // sending a response
             responseBody = {
                 "version": "0.1",
