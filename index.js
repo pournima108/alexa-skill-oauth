@@ -69,7 +69,7 @@ app.post('/webhook', function(req, res){
                         speechOutputText="your have problem with" +error;
                     }
                     else{
-                        console.log(JSON.stringify(issue.aggregateprogress));
+                        console.log(JSON.stringify(issue));
                         speechOutputText="your issues are" +issue.aggregateprogress;
                     }
                   
