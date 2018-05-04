@@ -57,7 +57,7 @@ app.post('/webhook', function(req, res){
         }
         else if(jsonData.request.type == "IntentRequest") {
             console.log("inside intent request ")
-            if (jsonData.request.intent.name == "InitialIntent") {
+            if (jsonData.request.intent.name == "StartIntent") {
                 var speechOutputText;
                 console.log('inside initial intent');
                 jira.issue.getIssue({
