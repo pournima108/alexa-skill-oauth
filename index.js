@@ -38,7 +38,7 @@ app.post('/webhook', function(req, res){
                 "response": {
                     "outputSpeech": {
                         "type": "PlainText",
-                        "text": 'Welcome to my Jira assiatant',
+                        "text": 'Welcome to my Jira assistant.This is my jira assistant .I can tell the issues on  pournimas jira board',
                     },
                     "card": {
                         "type": "Standard",
@@ -56,7 +56,9 @@ app.post('/webhook', function(req, res){
             };
         }
         else if(jsonData.request.type == "IntentRequest") {
+            console.log("inside intent request ")
             if (jsonData.request.intent.name == "InitialIntent") {
+                console.log('inside initial intent');
                 jira.issue.getIssue({
                     issueKey: 'SM-1'
                 }, function(error, issue) {
