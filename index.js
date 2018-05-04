@@ -60,12 +60,15 @@ app.post('/webhook', function(req, res){
                 jira.issue.getIssue({
                     issueKey: 'SM-1'
                 }, function(error, issue) {
+                    var speechOutputText;
                     if(error){
                         console.log(error)
+                        
+                        speechOutputText="your have problem with" +error;
                     }
                     else{
                         console.log(JSON.stringify(issue));
-                        res.send(issue)
+                        speechOutputText="your issues are" +issue;
                     }
                   
                 });
