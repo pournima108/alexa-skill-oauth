@@ -70,7 +70,7 @@ app.post('/webhook', function(req, res){
                     }
                     else{
                         console.log(JSON.stringify(issue));
-                        speechOutputText="your issues are" +issue;
+                        speechOutputText="your issues are" +JSON.stringify(issue.aggregateprogress);
                     }
                   
                 });
