@@ -20,7 +20,7 @@ app.use(session({ secret: 'red', saveUninitialized: true, resave: true }));
 // })
 
 var jira =JiraClient.oauth_util.getAuthorizeURL({
-    host: 'myoauthexample.atlassian.net/',
+    host: 'myoauthexample.atlassian.net',
     oauth: {
         consumer_key:"mykey",
         // private_key:fs.readFileSync('./jira.pem', 'utf8')
