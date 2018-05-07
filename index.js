@@ -36,20 +36,9 @@ app.post('/webhook', function(req, res){
             responseBody = {
                 "version": "0.1",
                 "response": {
-                    "outputSpeech": {
-                        "type": "PlainText",
-                        "text": 'Welcome to my Jira assistant.This is my jira assistant .I can tell the issues on  pournimas jira board',
-                    },
+                    "outputSpeech": {"type":"PlainText","text":"Welcome to jira assistant Please go to your Alexa app and link your account."},
                     "card": {
-                        "type": "Standard",
-                        "title": "Welcome",
-                        "text": "Welcome to Jira assistant",
-                    },
-                    "reprompt": {
-                        "outputSpeech": {
-                            "type": "PlainText",
-                            "text": "Say a command"
-                        }
+                      "type": "LinkAccount"
                     },
                     "shouldEndSession": false
                 },
