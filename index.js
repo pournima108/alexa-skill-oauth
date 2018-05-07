@@ -34,6 +34,8 @@ var jira =JiraClient.oauth_util.getAuthorizeURL({
 
     console.log(JSON.stringify(oauth));
     }
+}
+)
 
 
 app.post('/webhook', function(req, res){
