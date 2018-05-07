@@ -53,16 +53,11 @@ app.post('/webhook', function(req, res){
           console.log("launch request")
         // sending a response
         var outputSpeechText;
-        if(jira.url==null){
-            outputSpeechText="No access token available"
-        }
-        else{
-            outputSpeechText="Welcome to jira assistant Please go to your Alexa app and link your account."
-        }
+        
             responseBody = {
                 "version": "0.1",
                 "response": {
-                    "outputSpeech": {"type":"PlainText","text":outputSpeechText},
+                    "outputSpeech": {"type":"PlainText","text":"welcome to jira assitant Open jira app for account linking"},
                     "card": {
                       "type": "LinkAccount"
                     },
