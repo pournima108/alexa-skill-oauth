@@ -7,17 +7,68 @@ var Alexa = require("alexa-sdk");
 var server = require('http').createServer(app)
 var port = process.env.PORT || 3000
 app.use(session({ secret: 'red', saveUninitialized: true, resave: true }));
+var configFile = process.env['HOME']+"/config.js";
+var config = require(configFile);
+var privateKeyData ="-----BEGIN RSA PRIVATE KEY----- \n"+"MIICXAIBAAKBgQDVxlGAhUHszH2/SG51TWvTbLGkJslX7cjHcxLCL3ZyK5dQkZN1kF4OqndbAUzwhpbUejetNEPMZS2svC0boD4pZ0NzhSKuMhe5WEp+ZFrvTFvK9ZdIXZDBSB18+ubp13zicJOGpj9oFw7QlUVD9k1KB461EiQ3ScNd8kG/igttfwIDAQABAoGAW3QlR+s6Ydi17xBImQxPFbsJYCVru58xZwo2uzZc4Mj/SeuNfx0M8A9DUn6C8N9TRYEnsoSKgLXETYKPdaMfFATkJ02otE7ngxt4GtgO+dLoj97zTgPEWjVyl/Q+C9naO8h87Rl6PKwCTqGfAQgNv1LBTObymBzcWLK4fASsR5ECQQD4Ie+qYdgdI1On1HE8bK5FAvgZ8dtPAVAaRuMukGbp7qhetk/XvMyFvZ6Cs8iOASMXw1rg7xIWK28ZDvT1MK83AkEA3I2AznjneG+wsJZHvNZXb8y5CmKWxANgQJztUazE6HEJ/VTlJ8wQRBt91yqsKlHWTqYAWiLrcfPdp4/PII2H+QJBAJWRXzYE5JAryzFPDTKvEBzpPUPmVZu53t73+9kFkgNQqIzuuBIC7AVx1ypR1IJEjTK1vwH3GZ/jboRcT6u8POECQELuyqVeedjKBJRCtziuz9BFD+7/5oNMBvz04uzDguqLy51PE1BVlKYmtbUD5UXemiw6Iqc4K73kZWNBuHlHmnkCQBUHHlLx4E9d/PKERxnZCSoP2WCA9ldZABpmyFhmyKzO3QIw+ipDLiJAcF10Z5TNvc7nhptfUu/im0duG6Sk25I=\n"+"-----END RSA PRIVATE KEY-----";
+var consumer = 
+  new OAuth("https://myoauthexample.atlassian.nets/plugins/servlet/oauth/request-token",
+                  "https://jdog.atlassian.com/plugins/servlet/oauth/access-token",
+                  config["consumerKey"],
+                  "",
+                  "1.0",
+                  "https://pitangui.amazon.com/spa/skill/account-linking-status.html?vendorId=M6BD538RB8FI8",
+                  "RSA-SHA1",
+				  null,
+                  privateKeyData);
+                  
+ consumer.getOAuthRequestToken(
+                    function(error, oauthToken, oauthTokenSecret, results) {
+                        if (error) {
+                            console.log(error.data);
+                              response.send('Error getting OAuth access token');
+                        }
+                        else {
+                              request.session.oauthRequestToken = oauthToken;
+                              request.session.oauthRequestTokenSecret = oauthTokenSecret;
+                              response.redirect("https://myoauthexample.atlassian.net/plugins/servlet/oauth/authorize?oauth_token="+request.session.oauthRequestToken);
+                        }
+                    }
+                )
 
-
+consumer.getOAuthAccessToken (
+                    request.session.oauthRequestToken, 
+                    request.session.oauthRequestTokenSecret, 
+                    request.query.oauth_verifier,
+                    function(error, oauthAccessToken, oauthAccessTokenSecret, results){			
+                        if (error) { 
+                            console.log(error.data);
+                            response.send("error getting access token");		
+                        }
+                        else {
+                              request.session.oauthAccessToken = oauthAccessToken;
+                              request.session.oauthAccessTokenSecret = oauthAccessTokenSecret;
+                              consumer.get("https://myoauthexample.atlassian.net/rest/api/latest/issue/ MAP-1 .json", 
+                                request.session.oauthAccessToken, 
+                                request.session.oauthAccessTokenSecret, 
+                                "application/json",
+                                function(error, data, resp){
+                                    console.log(data);
+                                    data = JSON.parse(data);
+                                    response.send("I am looking at: "+data["key"]);
+                                }
+                            );
+                        }
+                    }
+                )
 // var jira = new JiraClient({
-//     host: 'pournima.atlassian.net',
+//     host: 'myoauthexample.atlassian.net',
 //     oauth: {
 //         consumer_key: 'mykey',
 //         private_key: "-----BEGIN RSA PRIVATE KEY----- \n"+"MIICXAIBAAKBgQDVxlGAhUHszH2/SG51TWvTbLGkJslX7cjHcxLCL3ZyK5dQkZN1kF4OqndbAUzwhpbUejetNEPMZS2svC0boD4pZ0NzhSKuMhe5WEp+ZFrvTFvK9ZdIXZDBSB18+ubp13zicJOGpj9oFw7QlUVD9k1KB461EiQ3ScNd8kG/igttfwIDAQABAoGAW3QlR+s6Ydi17xBImQxPFbsJYCVru58xZwo2uzZc4Mj/SeuNfx0M8A9DUn6C8N9TRYEnsoSKgLXETYKPdaMfFATkJ02otE7ngxt4GtgO+dLoj97zTgPEWjVyl/Q+C9naO8h87Rl6PKwCTqGfAQgNv1LBTObymBzcWLK4fASsR5ECQQD4Ie+qYdgdI1On1HE8bK5FAvgZ8dtPAVAaRuMukGbp7qhetk/XvMyFvZ6Cs8iOASMXw1rg7xIWK28ZDvT1MK83AkEA3I2AznjneG+wsJZHvNZXb8y5CmKWxANgQJztUazE6HEJ/VTlJ8wQRBt91yqsKlHWTqYAWiLrcfPdp4/PII2H+QJBAJWRXzYE5JAryzFPDTKvEBzpPUPmVZu53t73+9kFkgNQqIzuuBIC7AVx1ypR1IJEjTK1vwH3GZ/jboRcT6u8POECQELuyqVeedjKBJRCtziuz9BFD+7/5oNMBvz04uzDguqLy51PE1BVlKYmtbUD5UXemiw6Iqc4K73kZWNBuHlHmnkCQBUHHlLx4E9d/PKERxnZCSoP2WCA9ldZABpmyFhmyKzO3QIw+ipDLiJAcF10Z5TNvc7nhptfUu/im0duG6Sk25I=\n"+"-----END RSA PRIVATE KEY-----",
-//         token: "XIyDclt0yuS5kQkDEoaCYmnHbVU9n070",
-//         token_secret: '6leFo0N3vnxgFDq2Dh1dY8xh5Gglzlg8',
+//         token: "fM723QSDSAKNeVfZJzhcYqz31eSqTVpq",
+//         token_secret: 'EJ3rCI4NtOxZvVLkNdGOSbjtwBlDA06a',
 //     }
-// }))
+// })
 
 // JiraClient.oauth_util.getAuthorizeURL({
 //     host: 'myoauthexample.atlassian.net',
@@ -40,25 +91,25 @@ app.use(session({ secret: 'red', saveUninitialized: true, resave: true }));
 // });
 
 
-JiraClient.oauth_util.swapRequestTokenWithAccessToken({
-    host: 'myoauthexample.atlassian.net',
-    oauth: {
-        token: 'O5SaD2S7ZAzEglIxY6oLiuKfFCLoiXfj',
-        token_secret: 'EJ3rCI4NtOxZvVLkNdGOSbjtwBlDA06a',
-        oauth_verifier: 'QxiXtA',
-        consumer_key: 'mykey',
-        private_key: "-----BEGIN RSA PRIVATE KEY----- \n"+"MIICXAIBAAKBgQDVxlGAhUHszH2/SG51TWvTbLGkJslX7cjHcxLCL3ZyK5dQkZN1kF4OqndbAUzwhpbUejetNEPMZS2svC0boD4pZ0NzhSKuMhe5WEp+ZFrvTFvK9ZdIXZDBSB18+ubp13zicJOGpj9oFw7QlUVD9k1KB461EiQ3ScNd8kG/igttfwIDAQABAoGAW3QlR+s6Ydi17xBImQxPFbsJYCVru58xZwo2uzZc4Mj/SeuNfx0M8A9DUn6C8N9TRYEnsoSKgLXETYKPdaMfFATkJ02otE7ngxt4GtgO+dLoj97zTgPEWjVyl/Q+C9naO8h87Rl6PKwCTqGfAQgNv1LBTObymBzcWLK4fASsR5ECQQD4Ie+qYdgdI1On1HE8bK5FAvgZ8dtPAVAaRuMukGbp7qhetk/XvMyFvZ6Cs8iOASMXw1rg7xIWK28ZDvT1MK83AkEA3I2AznjneG+wsJZHvNZXb8y5CmKWxANgQJztUazE6HEJ/VTlJ8wQRBt91yqsKlHWTqYAWiLrcfPdp4/PII2H+QJBAJWRXzYE5JAryzFPDTKvEBzpPUPmVZu53t73+9kFkgNQqIzuuBIC7AVx1ypR1IJEjTK1vwH3GZ/jboRcT6u8POECQELuyqVeedjKBJRCtziuz9BFD+7/5oNMBvz04uzDguqLy51PE1BVlKYmtbUD5UXemiw6Iqc4K73kZWNBuHlHmnkCQBUHHlLx4E9d/PKERxnZCSoP2WCA9ldZABpmyFhmyKzO3QIw+ipDLiJAcF10Z5TNvc7nhptfUu/im0duG6Sk25I=\n"+"-----END RSA PRIVATE KEY-----"
-    }
-}, function (error, oauth) {
-    if(error){
-                console.log(error)
-            }
-            else{
+// JiraClient.oauth_util.swapRequestTokenWithAccessToken({
+//     host: 'myoauthexample.atlassian.net',
+//     oauth: {
+//         token: 'O5SaD2S7ZAzEglIxY6oLiuKfFCLoiXfj',
+//         token_secret: 'EJ3rCI4NtOxZvVLkNdGOSbjtwBlDA06a',
+//         oauth_verifier: 'QxiXtA',
+//         consumer_key: 'mykey',
+//         private_key: "-----BEGIN RSA PRIVATE KEY----- \n"+"MIICXAIBAAKBgQDVxlGAhUHszH2/SG51TWvTbLGkJslX7cjHcxLCL3ZyK5dQkZN1kF4OqndbAUzwhpbUejetNEPMZS2svC0boD4pZ0NzhSKuMhe5WEp+ZFrvTFvK9ZdIXZDBSB18+ubp13zicJOGpj9oFw7QlUVD9k1KB461EiQ3ScNd8kG/igttfwIDAQABAoGAW3QlR+s6Ydi17xBImQxPFbsJYCVru58xZwo2uzZc4Mj/SeuNfx0M8A9DUn6C8N9TRYEnsoSKgLXETYKPdaMfFATkJ02otE7ngxt4GtgO+dLoj97zTgPEWjVyl/Q+C9naO8h87Rl6PKwCTqGfAQgNv1LBTObymBzcWLK4fASsR5ECQQD4Ie+qYdgdI1On1HE8bK5FAvgZ8dtPAVAaRuMukGbp7qhetk/XvMyFvZ6Cs8iOASMXw1rg7xIWK28ZDvT1MK83AkEA3I2AznjneG+wsJZHvNZXb8y5CmKWxANgQJztUazE6HEJ/VTlJ8wQRBt91yqsKlHWTqYAWiLrcfPdp4/PII2H+QJBAJWRXzYE5JAryzFPDTKvEBzpPUPmVZu53t73+9kFkgNQqIzuuBIC7AVx1ypR1IJEjTK1vwH3GZ/jboRcT6u8POECQELuyqVeedjKBJRCtziuz9BFD+7/5oNMBvz04uzDguqLy51PE1BVlKYmtbUD5UXemiw6Iqc4K73kZWNBuHlHmnkCQBUHHlLx4E9d/PKERxnZCSoP2WCA9ldZABpmyFhmyKzO3QIw+ipDLiJAcF10Z5TNvc7nhptfUu/im0duG6Sk25I=\n"+"-----END RSA PRIVATE KEY-----"
+//     }
+// }, function (error, oauth) {
+//     if(error){
+//                 console.log(error)
+//             }
+//             else{
         
-            console.log(JSON.stringify(oauth));
-            }
-    // this will print out a permenant access token you can now use
-});
+//             console.log(JSON.stringify(oauth));
+//             }
+//     // this will print out a permenant access token you can now use
+// });
 
 
 
@@ -96,20 +147,20 @@ app.post('/webhook', function(req, res){
             if (jsonData.request.intent.name == "StartIntent") {
                 var speechOutputText;
                 console.log('inside initial intent');
-                jira.issue.getIssue({
-                    issueKey: 'SM-1'
-                }, function(error, issue) {
+                // jira.issue.getIssue({
+                //     issueKey: 'SM-1'
+                // }, function(error, issue) {
                    
-                    if(error){
-                        console.log(error)  
-                        speechOutputText="your have problem with" +error;
-                    }
-                    else{
-                        console.log(JSON.stringify(issue));
-                        speechOutputText="your issues are" +issue.aggregateprogress;
-                    }
+                //     if(error){
+                //         console.log(error)  
+                //         speechOutputText="your have problem with" +error;
+                //     }
+                //     else{
+                //         console.log(JSON.stringify(issue));
+                //         speechOutputText="your issues are" +issue.aggregateprogress;
+                //     }
                   
-                });
+                // });
                 responseBody = {
                     "version": '1.0',
                     "response": {
