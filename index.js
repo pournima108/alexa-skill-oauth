@@ -36,7 +36,7 @@ JiraClient.oauth_util.getAuthorizeURL({
     }
     // this will print out an authorization url and token and a token secret
     // visit the url to get a confirmation key
-    res.send(oauth);
+    
 });
 
 
