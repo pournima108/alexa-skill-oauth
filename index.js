@@ -12,7 +12,7 @@ var privateKeyData = fs.readFileSync(config["consumerPrivateKeyFile"], "utf8");
 
 var consumer = 
   new OAuth("https://myoauthexample.atlassian.net/plugins/servlet/oauth/request-token",
-                  "https://jdog.atlassian.com/plugins/servlet/oauth/access-token",
+                  "https://myoauthexample.atlassian.net/plugins/servlet/oauth/access-token",
                   config["consumerKey"],
                   "",
                   "1.0",
